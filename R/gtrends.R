@@ -164,8 +164,8 @@ gtrends <- function(
   
   interest_over_time <- interest_over_time(widget, comparison_item)
   interest_by_region <- interest_by_region(widget, comparison_item, low_search_volume)
-  related_topics <- related_topics(widget, comparison_item, hl)
-  related_queries <- related_queries(widget, comparison_item)
+  # related_topics <- related_topics(widget, comparison_item, hl)
+  # related_queries <- related_queries(widget, comparison_item)
     
   res <- list(
     interest_over_time = interest_over_time, 
@@ -173,8 +173,8 @@ gtrends <- function(
     interest_by_region = do.call(rbind, interest_by_region[names(interest_by_region) == "region"]),
     interest_by_dma = do.call(rbind, interest_by_region[names(interest_by_region) == "dma"]),
     interest_by_city = do.call(rbind, interest_by_region[names(interest_by_region) == "city"]),
-    related_topics = related_topics, 
-    related_queries = related_queries
+    related_topics = NULL, #related_topics, 
+    related_queries = NULL #related_queries
   )
   
   ## Remove row.names

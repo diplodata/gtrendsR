@@ -10,10 +10,14 @@ related_queries <- function(widget, comparison_item) {
 
 
 create_related_queries_payload <- function(i, widget) {
+  # temp fix for API change
+  widget$request$restriction$time[[i]] <- stringr::str_replace(widget$request$restriction$time[[i]], ' ', '+')
+  widget$request$trendinessSettings$compareTime[[i]] <- stringr::str_replace(widget$request$trendinessSettings$compareTime[[i]], ' ', '+')
   
   payload2 <- list()
   payload2$restriction$geo <-  as.list(widget$request$restriction$geo[i, , drop = FALSE])
   payload2$restriction$time <- widget$request$restriction$time[[i]]
+  payload2$restriction$originalTimeRangeForExploreUrl <- 'today+12-m' # obvs not a general solution
   payload2$restriction$complexKeywordsRestriction$keyword <- widget$request$restriction$complexKeywordsRestriction$keyword[[i]]
   payload2$keywordType <- widget$request$keywordType[[i]]
   payload2$metric <- widget$request$metric[[i]]
@@ -24,12 +28,11 @@ create_related_queries_payload <- function(i, widget) {
   payload2$language <- widget$request$language[[i]]
   
   url <- paste0(
-    "https://www.google.com/trends/api/widgetdata/relatedsearches/csv?req=",
+    "https://trends.google.com/trends/api/widgetdata/relatedsearches?hl=en-GB&tz=0&req=",
     jsonlite::toJSON(payload2, auto_unbox = T),
-    "&token=", widget$token[i],
-    "&tz=300&hl=en-US"
+    "&token=", widget$token[i]
   )
-  
+  cat(i, '  ', url, '\n\n')
 
   res <- curl::curl_fetch_memory(URLencode(url))
   
