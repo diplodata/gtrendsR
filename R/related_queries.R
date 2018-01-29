@@ -1,35 +1,34 @@
-related_queries <- function(widget, comparison_item) {
+related_queries <- function(widget, comparison_item, hl, time) {
   
   i <- which(grepl("queries", widget$title) == TRUE)
   
-  res <- lapply(i, create_related_queries_payload, widget = widget)
+  res <- lapply(i, create_related_queries_payload, widget = widget, hl = hl, period = time)
   res <- do.call(rbind, res)
   
   return(res)
 }
 
 
-create_related_queries_payload <- function(i, widget) {
+create_related_queries_payload <- function(i, widget, hl, period) {
   
   payload2 <- list()
   payload2$restriction$geo <-  as.list(widget$request$restriction$geo[i, , drop = FALSE])
-  payload2$restriction$time <- widget$request$restriction$time[[i]]
+  payload2$restriction$time <- gsub(' ', '+', widget$request$restriction$time[[i]])
+  payload2$restriction$originalTimeRangeForExploreUrl <- gsub(' ', '+', period)
   payload2$restriction$complexKeywordsRestriction$keyword <- widget$request$restriction$complexKeywordsRestriction$keyword[[i]]
   payload2$keywordType <- widget$request$keywordType[[i]]
   payload2$metric <- widget$request$metric[[i]]
-  payload2$trendinessSettings$compareTime <- widget$request$trendinessSettings$compareTime[[i]]
+  payload2$trendinessSettings$compareTime <- gsub(' ', '+', widget$request$trendinessSettings$compareTime[[i]])
   payload2$requestOptions$property <- widget$request$requestOptions$property[[i]]
   payload2$requestOptions$backend <- widget$request$requestOptions$backend[[i]]
   payload2$requestOptions$category <- widget$request$requestOptions$category[[i]]
   payload2$language <- widget$request$language[[i]]
   
   url <- paste0(
-    "https://www.google.com/trends/api/widgetdata/relatedsearches/csv?req=",
+    "https://trends.google.com/trends/api/widgetdata/relatedsearches?hl=", hl, '&tz=0&req=',
     jsonlite::toJSON(payload2, auto_unbox = T),
-    "&token=", widget$token[i],
-    "&tz=300&hl=en-US"
+    "&token=", widget$token[i]
   )
-  
 
   res <- curl::curl_fetch_memory(URLencode(url))
   

@@ -164,8 +164,8 @@ gtrends <- function(
   
   interest_over_time <- interest_over_time(widget, comparison_item)
   interest_by_region <- interest_by_region(widget, comparison_item, low_search_volume)
-  related_topics <- related_topics(widget, comparison_item, hl)
-  related_queries <- related_queries(widget, comparison_item)
+  related_topics <- related_topics(widget, comparison_item, hl, time)
+  related_queries <- related_queries(widget, comparison_item, hl, time)
     
   res <- list(
     interest_over_time = interest_over_time, 
